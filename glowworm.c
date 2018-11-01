@@ -30,31 +30,55 @@ void rand_init_worms(struct GlowWorm *gw,
     }
 }
 
-
+double euclid_dist(struct Glowworm gw1, struct GlowWorm gw2, unsigned int dim){
+    double dist = 0.;
+    for (unsigned int i = 0; i < dim; i++){
+        dist += abs(gw1.pos[i] - gw2.pos[i]);
+    }
+    return dist;
+}
 
 
 void glowworm_optimizer(double(*fitnessfunction)(double*), 
         unsigned int dim, double ftarget, double eval_budget)
 {
-    int i, j;
-    double f;
+    int i, j, k;
+    double evals = 0.;
+    double f, t;
     struct GlowWorm gw[GLOW_COUNT];
 
     eval_budget = fmin(1000000000. * dim, eval_budget);
     rand_init_worms(gw, GLOW_COUNT, dim);
 
     /* keep track of budget better */
-    for (i = 0.; i < eval_budget; i++)
+    for (t = 0.; true; t++)
     {
         /*phase 1: update luciferin*/
         for (j = 0; j < GLOW_COUNT; j++){
             f = fitnessfunction(gw[j].pos);
+            evals++;
             if (f < ftarget)
                 break;
             gw[j].l *= (1 - LUCI_DECAY);
             gw[j].l += LUCI_ENHANCE * f;
         }
         /*phase 2: move*/
+        /* this part should be a new function */
+        for (j = 0; j < GLOW_COUNT; j++){
+            for (k = 0; k < GLOW_COUNT; k++){
+                if (j != k 
+                   && gw[j].l < gw[k].l
+                   && gw[j].r >= euclid_dist(gw[j], gw[k], dim)){
+                    /* add it to some candidate set for gw[j]*/
+                }
+            }
+            /* calculate probabilities for all candidates of gw[j] */
+            /* select */
+            /* move towards selected candidate */
+            /* update radius */
+
+        }
+        
 
 
 

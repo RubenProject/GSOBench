@@ -4,17 +4,23 @@
 #include <limits.h>
 
 #define GLOW_COUNT 100
+#define MAX_DIM 40
+
+
 #define RHO 0.4
 #define GAMMA 0.6
 #define BETA 0.08
-#define NT 5
+#define N_T 5
 #define STEP_SIZE 0.03
-#define LUCI_0 5
+#define L_0 5
+/* These must be the same */
+#define R_S 1.0 
+#define R_0 1.0
 
 
 
 struct Glowworm{
-    double pos[40];
+    double pos[MAX_DIM];
     int l;/*luciferin*/
     int r;/*radius*/
 };
@@ -36,9 +42,10 @@ void rand_init_worms(struct Glowworm *gw, unsigned int n, unsigned int m){
         for (j = 0; j < m; j++){
             gw[i].pos[j] = 10. * ((double)rand() / RAND_MAX) - 5.;
         }
-        gw[i].l = 0;
-        gw[i].r = 0;
+        gw[i].l = L_0;
+        gw[i].r = R_0;
     }
+
 }
 
 /* calculate probabilities for all candidates of gw[i] */
@@ -59,7 +66,7 @@ int select_worm(struct Glowworm gw1, struct Glowworm *gw, int *cw, int n){
     t = rand() % 10000 / 10000.0;
     for (i = 0; i < n; i++){
         if (t < p[i])
-            return i;
+            return cw[i];
         else
             t -= p[i];
     }
@@ -68,14 +75,32 @@ int select_worm(struct Glowworm gw1, struct Glowworm *gw, int *cw, int n){
 
 
 struct Glowworm move_worm(struct Glowworm gw1, struct Glowworm gw2, unsigned int dim){
-    struct Glowworm gw3;
-    /* something something euclidean norm operator ? */
-    euclid_dist(gw1, gw2, dim);
-    return gw3;
+    double t[MAX_DIM];
+    double euclid_norm;
+    unsigned int i;
+    for (i = 0; i < dim; i++)
+        t[i] = gw2.pos[i] - gw1.pos[i];
+
+    euclid_norm = 0;
+    for (i = 0; i < dim; i++)
+        euclid_norm += t[i] * t[i];
+
+    euclid_norm = sqrt(euclid_norm);
+    for (i = 0; i < dim; i++)
+        t[i] /= euclid_norm; 
+
+    for (i = 0; i < dim; i++)
+        gw1.pos[i] += STEP_SIZE * t[i];
+
+    return gw1;
 }
 
 
-void update_radius(struct Glowworm *gw1, struct Glowworm *gw, unsigned int dim){
+double calc_radius(struct Glowworm gw1, int k){
+    double res;
+    res = fmax(0, gw1.r + BETA * (N_T - k));
+    res = fmin(R_S, res);
+    return res;
 }
 
 
@@ -88,7 +113,6 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
     struct Glowworm *gw_new;
     int cw[GLOW_COUNT]; /* candidate worms */
 
-    srand(42);
     eval_budget = fmin(1000000000. * dim, eval_budget);
     rand_init_worms(gw, GLOW_COUNT, dim);
 
@@ -98,9 +122,11 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
         for (i = 0; i < GLOW_COUNT; i++){
             f = fitnessfunction(gw[i].pos);
             evals++;
-            if (f < ftarget)
-                break;
-            gw[i].l = (1 - RHO) * gw[i].l + GAMMA * f;
+            if (f < ftarget || evals > eval_budget){
+                free(gw);
+                return;
+            }
+            gw[i].l = (1.0 - RHO) * gw[i].l + GAMMA * f;
         }
         /*phase 2: move*/
         gw_new = malloc(sizeof(struct Glowworm) * GLOW_COUNT);
@@ -120,8 +146,7 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
             /* move towards selected candidate */
             gw_new[i] = move_worm(gw[i], gw[gw_s], dim);
             /* update radius */
-            update_radius(&gw_new[i], gw, dim);
-
+            gw_new[i].r = calc_radius(gw_new[i], k);
         }
         /* swap to new generation of worms */
         free(gw);

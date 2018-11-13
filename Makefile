@@ -9,7 +9,7 @@
 
 #Strict options
 LDFLAGS=
-CFLAGS=-Wextra -Wall -ansi -pedantic
+CFLAGS=-Wextra -Wall -ansi -pedantic -std=c99 -O3
 #Lenient: add/remove any compilation or linking flags that you feel are necessary or not.
 # LDFLAGS=
 # CFLAGS=

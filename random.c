@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <limits.h>
 
-void MY_OPTIMIZER(double(*fitnessfunction)(double*), unsigned int dim, double ftarget, double maxfunevals)
+void random_optimizer(double(*fitnessfunction)(double*), unsigned int dim, double ftarget, double maxfunevals)
 {
     double * x = (double *)malloc(sizeof(double) * dim);
     double f;

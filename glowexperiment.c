@@ -73,10 +73,10 @@ int main(void)
                  *                 after fgeneric_initialization
                  *         fgeneric_best() the best value reached  
                  */
-                maxfunevals = 5. * dim[idx_dim]; /* PUT APPROPRIATE MAX. NUMBER OF FEVALS */
+                maxfunevals = 1.0 * 10000 * dim[idx_dim]; /* PUT APPROPRIATE MAX. NUMBER OF FEVALS */
                                                  /* 5. * dim should be fine to just check everything */
                 minfunevals = dim[idx_dim] + 2;  /* PUT MINIMAL USEFUL NUMBER OF FEVALS */
-                independent_restarts = -1;
+                independent_restarts = 1000;
                 while (fgeneric_evaluations() + minfunevals <= maxfunevals)
                 {
                     if (++independent_restarts > 0) 

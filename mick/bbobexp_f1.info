@@ -1,0 +1,12 @@
+funcId = 1, DIM = 2, Precision = 1.000e-08, algId = 'glowworm'
+% plotting
+data_f1/bbobexp_f1_DIM2.dat, 1
+funcId = 1, DIM = 2, Precision = 1.000e-08, algId = 'glowworm'
+% plotting
+data_f1/bbobexp-01_f1_DIM2.dat, 1:20001|9.1e-02, 2:20001|6.0e-01, 3:20001|1.5e+00, 4:20001|1.3e-02, 5:20001|9.1e-01, 41:20001|1.5e+00, 42:20001|3.8e-04, 43:20001|3.7e-01, 44
+funcId = 1, DIM = 2, Precision = 1.000e-08, algId = 'glowworm'
+% plotting
+data_f1/bbobexp-02_f1_DIM2.dat, 1:20001|5.1e-02, 2:20001|1.9e-01, 3:20001|5.1e-03, 4:20001|5.0e-02, 5:20001|2.9e-02, 41:20001|2.8e-01, 42:20001|7.8e-02, 43:20001|1.7e-01, 44:20001|1.5e-01, 45:20001|2.2e-01, 46:20001|1.7e-01, 47:20001|8.7e-02, 48:20001|6.8e-02, 49:20001|2.8e-02, 50:20001|1.2e-04
+funcId = 1, DIM = 2, Precision = 1.000e-08, algId = 'glowworm'
+% plotting
+data_f1/bbobexp-03_f1_DIM2.dat, 1:20001|5.5e-02, 2:20001|3.9e-04, 3:20001|6.8e-01, 4

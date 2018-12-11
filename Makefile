@@ -19,7 +19,7 @@ DIROK=dirOK.o
 # DIROK=dirOK-linux.o
 
 #Lists all executable, used by the "all" and "clean" rules.
-EXECS=exampletiming glowexperiment randomexperiment visualization
+EXECS=exampletiming glowexperiment randomexperiment visualization plot_para
 
 all: $(EXECS)
 
@@ -33,6 +33,8 @@ glowexperiment: glowworm.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o bench
 randomexperiment: random.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o randomexperiment.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lm
 visualization: glow_visualizer.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o glowvis.o
+	$(CC) $(LDFLAGS) -o $@ $^ -lm
+plot_para: plot_function.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lm
 
 #Your own experiment should have bbobStructures.h as a dependency and so should be added here.

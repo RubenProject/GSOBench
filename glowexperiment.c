@@ -31,11 +31,11 @@ int main(void)
 
     /* modify the following parameters, choosing a different setting
      * for each new experiment */
-    strcpy(params.dataPath, "glow1");  /* different folder for each experiment! */
+    strcpy(params.dataPath, "mick");  /* different folder for each experiment! */
     /* please beforehand run from the command-line 'python createfolders.py PUT_MY_BBOB_DATA_PATH'
      * to create the necessary folder structure to run an experiment. */
     strcpy(params.algName, "glowworm");
-    strcpy(params.comments, "glowworm optimization algorithm attempt 1");
+    strcpy(params.comments, "plotting");
 
     seed = time(NULL);
     srand(seed); /* used by optimization function*/

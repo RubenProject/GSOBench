@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <limits.h>
 
-#define GLOW_COUNT 100
+#define MAX_GLOW 100
 #define MAX_DIM 40
 
 
@@ -53,7 +53,7 @@ void rand_init_worms(struct Glowworm *gw, unsigned int n, unsigned int m){
 int select_worm(struct Glowworm gw1, struct Glowworm *gw, int *cw, int n){
     int i;
     double t, sum;
-    double p[GLOW_COUNT];
+    double p[MAX_GLOW];
     sum = 0;
     for (i = 0; i < n; i++){
         sum += gw[cw[i]].l - gw1.l;
@@ -109,17 +109,19 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
     int i, j, k, gw_s;
     double evals = 0.;
     double f, t;
-    struct Glowworm *gw = malloc(sizeof(struct Glowworm) * GLOW_COUNT);
+    struct Glowworm *gw = malloc(sizeof(struct Glowworm) * MAX_GLOW);
     struct Glowworm *gw_new;
-    int cw[GLOW_COUNT]; /* candidate worms */
+    int cw[MAX_GLOW]; /* candidate worms */
+	int n = dim * 5;
+	
 
     eval_budget = fmin(1000000000. * dim, eval_budget);
-    rand_init_worms(gw, GLOW_COUNT, dim);
+    rand_init_worms(gw, n, dim);
 
     t = 0;
     while(1) {
         /*phase 1: update luciferin*/
-        for (i = 0; i < GLOW_COUNT; i++){
+        for (i = 0; i < n; i++){
             f = fitnessfunction(gw[i].pos);
             evals++;
             if (f < ftarget || evals > eval_budget){
@@ -129,11 +131,11 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
             gw[i].l = (1.0 - RHO) * gw[i].l + GAMMA * f;
         }
         /*phase 2: move*/
-        gw_new = malloc(sizeof(struct Glowworm) * GLOW_COUNT);
+        gw_new = malloc(sizeof(struct Glowworm) * MAX_GLOW);
         /* this part should be a new function */
-        for (i = 0; i < GLOW_COUNT; i++){
+        for (i = 0; i < n; i++){
             k = 0;
-            for (j = 0; j < GLOW_COUNT; j++){
+            for (j = 0; j < n; j++){
                 if (i != j 
                    && gw[i].l < gw[j].l
                    && gw[i].r >= euclid_dist(gw[i], gw[j], dim)){

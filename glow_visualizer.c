@@ -6,7 +6,7 @@
 #include <string.h>
 
 #define VIS_FILE "vis_data.txt"
-#define GLOW_COUNT 100
+#define GLOW_COUNT 10
 #define MAX_DIM 40
 #define BUF_SIZE 5000
 

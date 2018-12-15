@@ -32,7 +32,7 @@ int main(void)
     strcpy(params.algName, "glowworm");
     strcpy(params.comments, "just for visualization purposes");
 
-    seed = time(NULL);
+    seed = 42;
     srand(seed); /* used by optimization function*/
     printf("random seed set to %d\n", seed);
 

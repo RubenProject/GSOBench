@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 plt.hold(True)
-for i in range(0, 100):
-    print(i)
+for i in range(0, 10):
     x=[]
     y=[]
     fp = open("vis_data.txt","r")
@@ -16,13 +15,11 @@ for i in range(0, 100):
             #print("hoi")
             x.append(float(currentline[1]))
             y.append(float(currentline[2].rstrip('\n')))
-    print(x)
-    print(y)
-    plt.plot(x[1],y[1],'bo')
-    plt.plot(x,y,'r-')
+    plt.plot(x[1],y[1], 'ko')
+    plt.plot(x,y,'g-')
     del x
     del y
 
 plt.axis([-5, 5, -5, 5])
-plt.savefig('plotding.pdf')
+plt.savefig('plotding.png')
 

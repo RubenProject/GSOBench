@@ -19,7 +19,7 @@ DIROK=dirOK.o
 # DIROK=dirOK-linux.o
 
 #Lists all executable, used by the "all" and "clean" rules.
-EXECS=exampletiming glowexperiment randomexperiment visualization plot_para
+EXECS=exampletiming glowexperiment randomexperiment visualization plot_para glowexperiment_improved
 
 all: $(EXECS)
 
@@ -29,6 +29,8 @@ all: $(EXECS)
 exampletiming: glowworm.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o exampletiming.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lm
 glowexperiment: glowworm.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o glowexperiment.o
+	$(CC) $(LDFLAGS) -o $@ $^ -lm
+glowexperiment_improved: glow_improved.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o glowexperiment.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lm
 randomexperiment: random.o benchmarksdeclare.o $(DIROK) benchmarkshelper.o benchmarks.o benchmarksnoisy.o fgeneric.o randomexperiment.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lm

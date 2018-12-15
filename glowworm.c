@@ -112,7 +112,7 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
     struct Glowworm *gw = malloc(sizeof(struct Glowworm) * MAX_GLOW);
     struct Glowworm *gw_new;
     int cw[MAX_GLOW]; /* candidate worms */
-	int n = dim * 5;
+	int n = 100;
 	
 
     eval_budget = fmin(1000000000. * dim, eval_budget);

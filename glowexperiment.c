@@ -23,6 +23,7 @@ int main(void)
 
     clock_t t0 = clock();
     time_t Tval;
+    const char *alg_name = "glow_imp_05";
     /**************************************************
      *          BBOB Mandatory initialization         *
      *************************************************/
@@ -31,11 +32,11 @@ int main(void)
 
     /* modify the following parameters, choosing a different setting
      * for each new experiment */
-    strcpy(params.dataPath, "glow_improved");  /* different folder for each experiment! */
+    strcpy(params.dataPath, alg_name);  /* different folder for each experiment! */
     /* please beforehand run from the command-line 'python createfolders.py PUT_MY_BBOB_DATA_PATH'
      * to create the necessary folder structure to run an experiment. */
-    strcpy(params.algName, "glow_improved");
-    strcpy(params.comments, "glow_improved");
+    strcpy(params.algName, alg_name);
+    strcpy(params.comments, alg_name);
 
     seed = time(NULL);
     srand(seed); /* used by optimization function*/

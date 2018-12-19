@@ -1,0 +1,16 @@
+glow1:
+    failed implementation.
+glow2:
+    failed implementation, rerun.
+glow3:
+    changed algorithm to minimize, N = 100, Rs = 1.0
+glow_improved:
+    failed implementation
+glow_improved2:
+    failed implementation
+glow_improved3:
+    changed algortih to minimize, dynamic N, Rs = 1.0
+random1:
+    random implementation.
+CMA-ES:
+    given CMA-ES implementation results.

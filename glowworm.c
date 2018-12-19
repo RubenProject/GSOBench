@@ -12,25 +12,34 @@
 #define BETA 0.08
 #define N_T 5
 #define STEP_SIZE 0.03
-#define L_0 5
+#define L_0 5.
 /* These must be the same */
-#define R_S 1.0 
-#define R_0 1.0
+#define R_S 0.5
+#define R_0 0.5
 
 
 
 struct Glowworm{
     double pos[MAX_DIM];
-    int l;/*luciferin*/
-    int r;/*radius*/
+    double l;/*luciferin*/
+    double r;/*radius*/
 };
 
 
+void print_worm(struct Glowworm gw, unsigned int dim){
+    unsigned int i;
+    for (i = 0; i < dim; i++){
+        printf("%f, ", gw.pos[i]);
+    }
+    printf("\n");
+}
+
+
 double euclid_dist(struct Glowworm gw1, struct Glowworm gw2, unsigned int dim){
-    unsigned int i = 0;
+    unsigned int i;
     double dist = 0.;
     for (i = 0; i < dim; i++){
-        dist += abs(gw1.pos[i] - gw2.pos[i]);
+        dist += fabs(gw1.pos[i] - gw2.pos[i]);
     }
     return dist;
 }
@@ -63,7 +72,7 @@ int select_worm(struct Glowworm gw1, struct Glowworm *gw, int *cw, int n){
     }
 
     /* random number between 0 and 1 */
-    t = rand() % 10000 / 10000.0;
+    t = (double)rand() / RAND_MAX;
     for (i = 0; i < n; i++){
         if (t < p[i])
             return cw[i];
@@ -96,9 +105,9 @@ struct Glowworm move_worm(struct Glowworm gw1, struct Glowworm gw2, unsigned int
 }
 
 
-double calc_radius(struct Glowworm gw1, int k){
+double calc_radius(struct Glowworm gw, int k){
     double res;
-    res = fmax(0, gw1.r + BETA * (N_T - k));
+    res = fmax(0., gw.r + BETA * (double)(N_T - k));
     res = fmin(R_S, res);
     return res;
 }
@@ -108,17 +117,16 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
         unsigned int dim, double ftarget, double eval_budget){
     int i, j, k, gw_s;
     double evals = 0.;
-    double f, t;
+    double f;
     struct Glowworm *gw = malloc(sizeof(struct Glowworm) * MAX_GLOW);
     struct Glowworm *gw_new;
     int cw[MAX_GLOW]; /* candidate worms */
-	int n = 100;
+	int n = 50;
 	
 
     eval_budget = fmin(1000000000. * dim, eval_budget);
     rand_init_worms(gw, n, dim);
 
-    t = 0;
     while(1) {
         /*phase 1: update luciferin*/
         for (i = 0; i < n; i++){
@@ -128,7 +136,7 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
                 free(gw);
                 return;
             }
-            gw[i].l = (1.0 - RHO) * gw[i].l + GAMMA * f;
+            gw[i].l = (1.0 - RHO) * gw[i].l + GAMMA * 1.0 / f;
         }
         /*phase 2: move*/
         gw_new = malloc(sizeof(struct Glowworm) * MAX_GLOW);
@@ -153,6 +161,5 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
         /* swap to new generation of worms */
         free(gw);
         gw = gw_new;
-        t++;
     }
 }

@@ -6,7 +6,7 @@
 #include <string.h>
 
 #define VIS_FILE "vis_data.txt"
-#define GLOW_COUNT 10
+#define GLOW_COUNT 100
 #define MAX_DIM 40
 #define BUF_SIZE 5000
 
@@ -18,15 +18,15 @@
 #define STEP_SIZE 0.03
 #define L_0 5
 /* These must be the same */
-#define R_S 1.0 
-#define R_0 1.0
+#define R_S 0.5 
+#define R_0 0.5
 
 
 
 struct Glowworm{
     double pos[MAX_DIM];
-    int l;/*luciferin*/
-    int r;/*radius*/
+    double l;/*luciferin*/
+    double r;/*radius*/
 };
 
 
@@ -34,7 +34,7 @@ double euclid_dist(struct Glowworm gw1, struct Glowworm gw2, unsigned int dim){
     unsigned int i = 0;
     double dist = 0.;
     for (i = 0; i < dim; i++){
-        dist += abs(gw1.pos[i] - gw2.pos[i]);
+        dist += fabs(gw1.pos[i] - gw2.pos[i]);
     }
     return dist;
 }
@@ -169,14 +169,14 @@ static void ftoa(float n, char *res, int afterpoint)
 }
 
 
-void visualize(FILE *fp, struct Glowworm *gw, unsigned int dim){
+void visualize(FILE *fp, struct Glowworm *gw, const int n, unsigned int dim){
     char *t1, *t2, *t3;
     int i, j;
     double d;
     t1 = malloc(BUF_SIZE * sizeof(char));
     t2 = malloc(BUF_SIZE * sizeof(char));
     t3 = malloc(BUF_SIZE * sizeof(char));
-    for (i = 0; i < GLOW_COUNT; i++){
+    for (i = 0; i < n; i++){
         t1[0] = '\0';
         t2[0] = '\0';
         t3[0] = '\0';
@@ -212,31 +212,32 @@ void glowworm_visualizer(double(*fitnessfunction)(double*),
     struct Glowworm *gw = malloc(sizeof(struct Glowworm) * GLOW_COUNT);
     struct Glowworm *gw_new;
     int cw[GLOW_COUNT]; /* candidate worms */
+    const int n = 50;
+    
 
     eval_budget = fmin(1000000000. * dim, eval_budget);
-    rand_init_worms(gw, GLOW_COUNT, dim);
+    rand_init_worms(gw, n, dim);
 
     fp = fopen(VIS_FILE, "w");
 
     t = 0;
     while(1) {
-        visualize(fp, gw, dim);
+        visualize(fp, gw, n, dim);
         /*phase 1: update luciferin*/
-        for (i = 0; i < GLOW_COUNT; i++){
+        for (i = 0; i < n; i++){
             f = fitnessfunction(gw[i].pos);
             evals++;
             if (f < ftarget || evals > eval_budget){
                 free(gw);
                 return;
             }
-            gw[i].l = (1.0 - RHO) * gw[i].l + GAMMA * f;
+            gw[i].l = (1.0 - RHO) * gw[i].l + GAMMA * 1. / f;
         }
         /*phase 2: move*/
         gw_new = malloc(sizeof(struct Glowworm) * GLOW_COUNT);
-        /* this part should be a new function */
-        for (i = 0; i < GLOW_COUNT; i++){
+        for (i = 0; i < n; i++){
             k = 0;
-            for (j = 0; j < GLOW_COUNT; j++){
+            for (j = 0; j < n; j++){
                 if (i != j 
                    && gw[i].l < gw[j].l
                    && gw[i].r >= euclid_dist(gw[i], gw[j], dim)){

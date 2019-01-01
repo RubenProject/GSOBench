@@ -14,8 +14,8 @@
 #define STEP_SIZE 0.03
 #define L_0 5
 /* These must be the same */
-#define R_S 0.5 
-#define R_0 0.5
+#define R_S 3.0
+#define R_0 3.0
 
 
 
@@ -23,6 +23,7 @@ struct Glowworm{
     double pos[MAX_DIM];
     double l;/*luciferin*/
     double r;/*radius*/
+    int s; /*glowworm hasn't moved for x iterations */
 };
 
 
@@ -58,6 +59,7 @@ void rand_init_worms(double(*fitnessfunction)(double*), struct Glowworm *gw,
         }
         gw[i].l = L_0;
         gw[i].r = R_0;
+        gw[i].s = 0;
     }
     //evaluate scouts
     double f_total = 0;
@@ -92,6 +94,9 @@ void rand_init_worms(double(*fitnessfunction)(double*), struct Glowworm *gw,
             t = fmax(t, -5.);
             gw[i].pos[j] = t;
         }
+        gw[i].l = L_0;
+        gw[i].r = R_0;
+        gw[i].s = 0;
     }
     free(f_scout);
 }
@@ -144,11 +149,43 @@ struct Glowworm move_worm(struct Glowworm gw1, struct Glowworm gw2, unsigned int
 }
 
 
+struct Glowworm copy_worm(struct Glowworm gw, unsigned int dim){
+    struct Glowworm gw_new;
+    unsigned int i;
+    for (i = 0; i < dim; i++)
+        gw_new.pos[i] = gw.pos[i];
+    gw_new.r = gw.r;
+    gw_new.l = gw.l;
+    gw_new.s = gw.s;
+    return gw_new;
+}
+
+
 double calc_radius(struct Glowworm gw, int k){
     double res;
     res = fmax(0., gw.r + BETA * (double)(N_T - k));
     res = fmin(R_S, res);
     return res;
+}
+
+
+int leader_worm(struct Glowworm *gw, struct Glowworm gw1, int n, unsigned int dim){
+    int i, dist;
+    for (i = 0; i < n; i++){
+        dist = euclid_dist(gw1, gw[i], dim);
+        if (dist > 0.01 && dist < R_S)
+            return 1;
+    }
+    return 0;
+}
+
+
+struct Glowworm relocate_worm(struct Glowworm gw, unsigned int dim){
+    unsigned int i;
+    for (i = 0; i < dim; i++){
+        gw.pos[i] = 10. * ((double)rand() / RAND_MAX) - 5.;
+    }
+    return gw;
 }
 
 
@@ -191,10 +228,24 @@ void glowworm_optimizer(double(*fitnessfunction)(double*),
                     cw[k++] = j;
                 }
             }
-            /* select */
-            gw_s = select_worm(gw[i], gw, cw, k);
-            /* move towards selected candidate */
-            gw_new[i] = move_worm(gw[i], gw[gw_s], dim);
+            if (k > 0){
+                /* select */
+                gw_s = select_worm(gw[i], gw, cw, k);
+                /* move towards selected candidate */
+                gw_new[i] = move_worm(gw[i], gw[gw_s], dim);
+                gw_new[i].s = 0;
+            } else {
+                gw_new[i] = copy_worm(gw[i], dim);
+                gw_new[i].s++;
+                /* check to relocate */
+                if (gw_new[i].s > 5 && gw_new[i].r == R_S){
+                    if (!leader_worm(gw, gw_new[i], n, dim)){
+                        gw_new[i] = relocate_worm(gw_new[i], dim);
+                    }
+                    gw_new[i].s = 0;
+                }
+
+            }
             /* update radius */
             gw_new[i].r = calc_radius(gw_new[i], k);
         }

@@ -15,7 +15,7 @@ void glowworm_optimizer(double(*fitnessfunction)(double*), unsigned int dim, dou
 
 int main(void)
 {
-    unsigned int dim[6] = {2, 3, 5, 10, 20, 40};
+    unsigned int dim[6] = {2};
     unsigned int instances[15] = {1, 2, 3, 4, 5, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50};
     unsigned int idx_dim, ifun, idx_instances, seed;
     int independent_restarts;
@@ -23,7 +23,7 @@ int main(void)
 
     clock_t t0 = clock();
     time_t Tval;
-    const char *alg_name = "glow_imp_05";
+    const char *alg_name = "trash";
     /**************************************************
      *          BBOB Mandatory initialization         *
      *************************************************/
@@ -46,7 +46,7 @@ int main(void)
     /* fgeneric_noiseseed(30); printf("seed for the noise set to: 30\n"); */
 
     /* now the main loop */
-    for (idx_dim = 0; idx_dim < 6; idx_dim++)
+    for (idx_dim = 0; idx_dim < 1; idx_dim++)
     {
         /* Function indices are from 1 to 24 (noiseless) or from 101 to 130 (noisy) */
         /* for the noisy functions exchange the for loop with */
